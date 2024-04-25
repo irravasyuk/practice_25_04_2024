@@ -115,3 +115,84 @@ def main():
 
 main()
 
+# Завдання 3
+# До вже реалізованого класу «Дріб» додайте можливість
+# стиснення та розпакування даних з
+# використанням json та pickle.
+import pickle
+import json
+class Fraction:
+    count = 0
+
+    def __init__(self, numerator, denominator):
+        self.numerator = numerator
+        self.denominator = denominator
+        Fraction.count += 1
+
+    @staticmethod
+    def count_fraction():
+        return Fraction.count
+
+    def __str__(self):
+        return f"{self.numerator}/{self.denominator}"
+
+    def __add__(self, other):
+        new_numerator = self.numerator * other.denominator + other.numerator * self.denominator
+        new_denominator = self.denominator * other.denominator
+        return Fraction(new_numerator, new_denominator)
+
+    def __sub__(self, other):
+        new_numerator = self.numerator * other.denominator - other.numerator * self.denominator
+        new_denominator = self.denominator * other.denominator
+        return Fraction(new_numerator, new_denominator)
+
+    def __mul__(self, other):
+        new_numerator = self.numerator * other.numerator
+        new_denominator = self.denominator * other.denominator
+        return Fraction(new_numerator, new_denominator)
+
+    def __truediv__(self, other):
+        new_numerator = self.numerator * other.denominator
+        new_denominator = self.denominator * other.numerator
+        return Fraction(new_numerator, new_denominator)
+
+    def to_json(self):
+        return json.dumps({'numerator': self.numerator, 'denominator': self.denominator})
+
+    @staticmethod
+    def from_json(json_str):
+        data = json.loads(json_str)
+        return Fraction(data['numerator'], data['denominator'])
+
+    def to_pickle(self, filename):
+        with open(filename, 'wb') as f:
+            pickle.dump({'numerator': self.numerator, 'denominator': self.denominator}, f)
+
+    @staticmethod
+    def from_pickle(filename):
+        with open(filename, 'rb') as f:
+            data = pickle.load(f)
+        return Fraction(data['numerator'], data['denominator'])
+
+
+fraction1 = Fraction(1, 2)
+fraction2 = Fraction(3, 4)
+
+print(fraction1 + fraction2)
+print(fraction1 - fraction2)
+print(fraction1 * fraction2)
+print(fraction1 / fraction2)
+
+print("\nКількість створених об'єктів класу Fraction: ", Fraction.count_fraction())
+
+json_str = fraction1.to_json()
+restored_fraction = Fraction.from_json(json_str)
+print("\nВідновлений за допомогою JSON об'єкт:", restored_fraction)
+
+fraction1.to_pickle('fraction.pickle')
+restored_fraction = Fraction.from_pickle('fraction.pickle')
+print("Відновлений за допомогою pickle об'єкт:", restored_fraction)
+
+
+
+
